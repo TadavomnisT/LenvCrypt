@@ -1,7 +1,7 @@
 
 # LenvCrypt
 
-I might add the source-code later:3
+WIP: Work In Progress,... __DO NOT USE THIS CODE YET!__ 
 
 ![LenvCrypt Logo](./Docs/Images/LenvCrypt_logo.png)
 
