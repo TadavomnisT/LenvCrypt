@@ -5,7 +5,7 @@ I might add the source-code later:3
 
 ![LenvCrypt Logo](./Docs/Images/LenvCrypt_logo.png)
 
-**LenvCrypt**: Linux Environment Encrypted, is a secure, password-protected sandbox designed to create an encrypted environment on GNU/Linux systems. LenvCrypt works based on _LUKS_, and aims to provide users with a safe space to run programs and store sensitive data a part of the host system without the risk of exposure.
+**LenvCrypt**: Linux Environment Encrypted, is a secure, password-protected sandbox storage designed to create an encrypted environment on GNU/Linux systems. LenvCrypt works based on _LUKS_, and aims to provide users with a safe space to run programs and store sensitive data a part of the host system without the risk of exposure.
 
 ## How does it work?
 
