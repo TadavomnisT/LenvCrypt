@@ -58,6 +58,8 @@ Commands:
                    Example: ./lenvcrypt.sh delete mysandbox
   help, -h, --help
             => Display this help information.
+  version, -v, --version
+            => Display LenvCrypt's version.
 ```
 
 ```bash
@@ -103,6 +105,11 @@ Commands:
   ./lenvcrypt.sh help
   ```
 
+- **version, -v, --version**  
+  Display LenvCrypt's version.  
+  ```bash
+  ./lenvcrypt.sh version
+  ```
 
 ## Important Warning
 
