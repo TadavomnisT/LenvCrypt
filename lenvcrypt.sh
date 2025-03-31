@@ -8,6 +8,7 @@
 # -----------------------
 RED=$'\033[31m'
 GREEN=$'\033[32m'
+BLUE=$'\033[34m'
 YELLOW=$'\033[33m'
 MAGENTA=$'\033[35m'
 NC=$'\033[0m'  # No Color
@@ -88,6 +89,7 @@ Commands:
   ${GREEN}create${NC}    => Create a new sandbox.
                    The script will prompt for a sandbox name and a size.
                    Example: $0 create
+                            $0 create mysandbox
   ${GREEN}open${NC}      => Open an existing sandbox.
                    Example: $0 open mysandbox
   ${GREEN}close${NC}     => Close an opened sandbox.
@@ -123,9 +125,11 @@ create_sandbox() {
     fi
 
     echo "Choose sandbox size (in MB) from the following options or enter your own value:"
+    echo "${GREEN}Recommended sizes:${NC}"
     for size in "${SIZES[@]}"; do
         echo "  - ${size}MB"
     done
+    echo ""
     read -p "Size (MB): " sandbox_size
 
     if ! [[ "$sandbox_size" =~ ^[1-9][0-9]*$ ]]; then
@@ -144,8 +148,16 @@ create_sandbox() {
     sudo cryptsetup luksFormat "$img_file"
     if [[ $? -ne 0 ]]; then
         error "Error during luksFormat."
+        log_msg "Deleting sandbox image '$img_file'..."
+        rm -f "$img_file"
+        if [[ $? -ne 0 ]]; then
+            error "Error deleting '$img_file'."
+            exit 1
+        fi
         exit 1
     fi
+
+    log_msg "Device successfully formatted with LUKS, Enter the password again to continue."
 
     sudo cryptsetup luksOpen "$img_file" "$sandbox_name"
     if [[ $? -ne 0 ]]; then
@@ -199,8 +211,11 @@ open_sandbox() {
     fi
 
     log_msg "Sandbox '$sandbox_name' successfully opened and mounted at:"
-    echo "  $mountpoint"
+    echo "  ${GREEN}$mountpoint${NC}"
+    echo ""
     help_msg "You can now access your sandbox files."
+    help_msg "You may need to run ${RED}'sudo su'${NC} over there to get the permission to work with files."
+    warn "${RED}BE WARNED${NC} ${BLUE}that the sanbox '$sandbox_name' is open and any user may access it,${NC} ${RED}DON'T FORGET${NC} ${BLUE}to close it after you're done!${NC}"
 }
 
 # Close an opened sandbox
