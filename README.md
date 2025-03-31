@@ -1,8 +1,6 @@
 
 # LenvCrypt
 
- LenvCrypt: Encrypted Linux Environment. A secure, password-protected sandbox storage for GNU/Linux. 
-
 ![LenvCrypt Logo](./Docs/Images/LenvCrypt_logo.png)
 
 **LenvCrypt**: **L**inux **Env**ironment En**crypt**ed, is a secure, password-protected sandbox storage designed to create an encrypted environment on GNU/Linux systems. LenvCrypt works based on _LUKS_, and aims to provide users with a safe space to run programs and store sensitive data a part of the host system without the risk of exposure.
@@ -116,7 +114,6 @@ When a sandbox is open, its decrypted content (plain data) is mounted and access
 
 ## How does it work?
 
-
 LenvCrypt uses LUKS (_Linux Unified Key Setup_) to provide a secure, encrypted container where you can safely store and work with files. LUKS is a widely adopted standard for Linux disk encryption that implements a platform-independent on-disk format. This guarantees compatibility and interoperability between various programs and operating systems while ensuring secure password management (as described on [Wikipedia](https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup)).
 
 Using LUKS, LenvCrypt creates an encrypted disk image (a file with a .img extension) that serves as a container for your sandbox. Here’s a an overview of what goes under the hood:
@@ -135,7 +132,7 @@ This design ensures that your sandbox files remain encrypted at rest and only be
 
 ## ScreenShots
 
-* I should add something here...
+![LenvCrypt ScreenShot](./Docs/Images/ScreenShot.png)
 
 
 ## Contributing
@@ -146,6 +143,7 @@ Feel free to get involved! If you would like to contribute to LenvCrypt, please 
 2. Add a feature or bug a fix!
 3. Make your changes and commit them with clear messages (Explain what you did).
 4. Open a pull request with a description of your changes.
+
 
 ## License
 
