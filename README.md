@@ -5,7 +5,7 @@
 
 ![LenvCrypt Logo](./Docs/Images/LenvCrypt_logo.png)
 
-**LenvCrypt**: __L__inux __Env__ironment En__crypt__ed, is a secure, password-protected sandbox storage designed to create an encrypted environment on GNU/Linux systems. LenvCrypt works based on _LUKS_, and aims to provide users with a safe space to run programs and store sensitive data a part of the host system without the risk of exposure.
+**LenvCrypt**: **L**inux **Env**ironment En**crypt**ed, is a secure, password-protected sandbox storage designed to create an encrypted environment on GNU/Linux systems. LenvCrypt works based on _LUKS_, and aims to provide users with a safe space to run programs and store sensitive data a part of the host system without the risk of exposure.
 
 
 ## Features
@@ -108,9 +108,9 @@ Commands:
 
 ## Important Warning
 
-__BE WARNED__ that if a sandbox is open, any user on your system may access it. **DON'T FORGET to close the sandbox after you're done** to ensure the security of your encrypted storage.
+**BE WARNED** that if a sandbox is open, any user on your system may access it. **DON'T FORGET to close the sandbox after you're done** to ensure the security of your encrypted storage.
 
-When a sandbox is open, its decrypted content (plain data) is mounted and accessible via a mountpoint (located in the `./Mountpoints/` directory), meaning the security provided by encryption remains only active when the sandbox is closed. ___Always close your sandbox when you are not using it.___
+When a sandbox is open, its decrypted content (plain data) is mounted and accessible via a mountpoint (located in the `./Mountpoints/` directory), meaning the security provided by encryption remains only active when the sandbox is closed. ***Always close your sandbox when you are not using it.***
 
 
 
