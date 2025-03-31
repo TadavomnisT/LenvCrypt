@@ -3,6 +3,21 @@
 # This script can create, open, close, list, delete sandboxes, and show help.
 # Directories used: ./Sandboxes/ to store .img files, and ./Mountpoints/ to mount opened sandboxes.
 
+# -----------------------
+# Color definitions
+# -----------------------
+RED=$'\033[31m'
+GREEN=$'\033[32m'
+YELLOW=$'\033[33m'
+MAGENTA=$'\033[35m'
+NC=$'\033[0m'  # No Color
+
+# Message functions (only the tag is colored)
+error()     { echo -e "[${RED}ERROR${NC}]: $1"; }
+log_msg()   { echo -e "[${GREEN}LOG${NC}]: $1"; }
+help_msg()  { echo -e "[${YELLOW}HELP${NC}]: $1"; }
+warn()      { echo -e "[${MAGENTA}WARN${NC}]: $1"; }
+
 # Directories
 SANDBOX_DIR="./Sandboxes"
 MOUNTPOINT_DIR="./Mountpoints"
@@ -13,12 +28,11 @@ mkdir -p "$SANDBOX_DIR" "$MOUNTPOINT_DIR"
 # Default sizes (in MB)
 SIZES=(100 200 500 1024)
 
-# Check if cryptsetup exists (cross-platform tip: we try to detect package managers)
+# Check if cryptsetup exists (cross-platform tip: trying to detect package managers)
 check_cryptsetup() {
     if ! command -v cryptsetup >/dev/null 2>&1 ; then
-        echo "Error: cryptsetup is not installed on this system."
-        echo "Please install cryptsetup with your package manager."
-        # Try to give hints based on known package managers
+        error "cryptsetup is not installed on this system."
+        help_msg "Please install cryptsetup with your package manager."
         if command -v apt-get >/dev/null 2>&1; then
             echo "On Debian/Ubuntu, run: sudo apt-get install cryptsetup"
         elif command -v dnf >/dev/null 2>&1; then
@@ -35,7 +49,7 @@ check_cryptsetup() {
 # Usage/help info
 show_help() {
     cat <<EOF
-Usage: $0 <command> [sandbox_name]
+[${YELLOW}HELP${NC}]: Usage: $0 <command> [sandbox_name]
 
 Commands:
   create    => Create a new sandbox.
@@ -52,22 +66,20 @@ Commands:
               Example: $0 delete mysandbox
   help, -h, --help
               => Display this help information.
-
 EOF
 }
 
 # Create a new sandbox
 create_sandbox() {
-    # Prompt for sandbox name
     read -p "Enter sandbox name: " sandbox_name
     if [[ -z "$sandbox_name" ]]; then
-        echo "Sandbox name cannot be empty."
+        error "Sandbox name cannot be empty."
         exit 1
     fi
 
     img_file="${SANDBOX_DIR}/${sandbox_name}.img"
     if [[ -f "$img_file" ]]; then
-        echo "Error: Sandbox '$sandbox_name' already exists."
+        error "Sandbox '$sandbox_name' already exists."
         exit 1
     fi
 
@@ -75,77 +87,66 @@ create_sandbox() {
     for size in "${SIZES[@]}"; do
         echo "  - ${size}MB"
     done
-    echo "Enter sandbox size in MB (must be a positive integer):"
     read -p "Size (MB): " sandbox_size
 
-    # Validate input: must be a positive integer greater or equal to 1.
     if ! [[ "$sandbox_size" =~ ^[1-9][0-9]*$ ]]; then
-        echo "Invalid size. Please enter a positive integer."
+        error "Invalid size. Please enter a positive integer."
         exit 1
     fi
 
-    echo "Creating sandbox '$sandbox_name' of size ${sandbox_size}MB..."
-    # Create file using dd
+    log_msg "Creating sandbox '$sandbox_name' of size ${sandbox_size}MB..."
     dd if=/dev/zero of="$img_file" bs=1M count="$sandbox_size" status=progress
     if [[ $? -ne 0 ]]; then
-        echo "Error creating disk image."
+        error "Error creating disk image."
         exit 1
     fi
 
-    # Format with LUKS
-    echo "Formatting the disk image with LUKS..."
-    # Note: This will ask for a passphrase interactively.
+    log_msg "Formatting the disk image with LUKS..."
     sudo cryptsetup luksFormat "$img_file"
     if [[ $? -ne 0 ]]; then
-        echo "Error during luksFormat."
+        error "Error during luksFormat."
         exit 1
     fi
 
-    # Open LUKS container
     sudo cryptsetup luksOpen "$img_file" "$sandbox_name"
     if [[ $? -ne 0 ]]; then
-        echo "Error opening the luks container."
+        error "Error opening the LUKS container."
         exit 1
     fi
 
-    # Create filesystem
     sudo mkfs.ext4 "/dev/mapper/${sandbox_name}" -q
     if [[ $? -ne 0 ]]; then
-        echo "Error creating ext4 filesystem."
+        error "Error creating ext4 filesystem."
         sudo cryptsetup luksClose "$sandbox_name"
         exit 1
     fi
 
-    # Create mountpoint directory for potential future use
     mkdir -p "${MOUNTPOINT_DIR}/${sandbox_name}"
-
-    # Close the LUKS container
     sudo cryptsetup luksClose "$sandbox_name"
 
-    echo "Sandbox '$sandbox_name' successfully created."
-    echo "To open it later, run: $0 open $sandbox_name"
+    log_msg "Sandbox '$sandbox_name' successfully created."
+    help_msg "To open it later, run: $0 open $sandbox_name"
 }
 
 # Open an existing sandbox
 open_sandbox() {
     sandbox_name="$1"
     if [[ -z "$sandbox_name" ]]; then
-        echo "Error: No sandbox name provided for open command."
+        error "No sandbox name provided for open command."
         exit 1
     fi
 
     img_file="${SANDBOX_DIR}/${sandbox_name}.img"
     if [[ ! -f "$img_file" ]]; then
-        echo "Error: Sandbox image '$img_file' does not exist."
-        echo "You should create it first with: $0 create"
+        error "Sandbox image '$img_file' does not exist."
+        help_msg "You should create it first with: $0 create"
         exit 1
     fi
 
-    echo "Opening sandbox '$sandbox_name'..."
-    # Open LUKS container and mount
+    log_msg "Opening sandbox '$sandbox_name'..."
     sudo cryptsetup luksOpen "$img_file" "$sandbox_name"
     if [[ $? -ne 0 ]]; then
-        echo "Error opening the luks container."
+        error "Error opening the LUKS container."
         exit 1
     fi
 
@@ -153,21 +154,21 @@ open_sandbox() {
     mkdir -p "$mountpoint"
     sudo mount "/dev/mapper/${sandbox_name}" "$mountpoint"
     if [[ $? -ne 0 ]]; then
-        echo "Error mounting the filesystem."
+        error "Error mounting the filesystem."
         sudo cryptsetup luksClose "$sandbox_name"
         exit 1
     fi
 
-    echo "Sandbox '$sandbox_name' successfully opened and mounted at:"
+    log_msg "Sandbox '$sandbox_name' successfully opened and mounted at:"
     echo "  $mountpoint"
-    echo "You can now access your sandbox files."
+    help_msg "You can now access your sandbox files."
 }
 
 # Close an opened sandbox
 close_sandbox() {
     sandbox_name="$1"
     if [[ -z "$sandbox_name" ]]; then
-        echo "Error: No sandbox name provided for close command."
+        error "No sandbox name provided for close command."
         exit 1
     fi
 
@@ -175,34 +176,34 @@ close_sandbox() {
     if mountpoint -q "$mountpoint"; then
         sudo umount "$mountpoint"
         if [[ $? -ne 0 ]]; then
-            echo "Error: Could not unmount '$mountpoint'."
+            error "Could not unmount '$mountpoint'."
             exit 1
         fi
     else
-        echo "Warning: '$mountpoint' is not mounted."
+        warn "'$mountpoint' is not mounted."
     fi
 
     sudo cryptsetup luksClose "$sandbox_name"
     if [[ $? -ne 0 ]]; then
-        echo "Error: Could not close the LUKS container '$sandbox_name'."
+        error "Could not close the LUKS container '$sandbox_name'."
         exit 1
     fi
 
-    echo "Sandbox '$sandbox_name' has been closed."
+    log_msg "Sandbox '$sandbox_name' has been closed."
 }
 
 # List all sandboxes (by listing .img files)
 list_sandboxes() {
-    echo "Listing available sandboxes in ${SANDBOX_DIR}:"
+    echo "*** Listing available sandboxes in ${SANDBOX_DIR}:"
     shopt -s nullglob
     sandbox_found=0
     for file in "$SANDBOX_DIR"/*.img; do
         sandbox_found=1
         sandbox=$(basename "$file" .img)
-        echo " - $sandbox"
+        echo " - ${GREEN}$sandbox${NC}"
     done
     if [[ $sandbox_found -eq 0 ]]; then
-        echo "No sandboxes found."
+        warn "No sandboxes found."
     fi
 }
 
@@ -210,7 +211,7 @@ list_sandboxes() {
 delete_sandbox() {
     sandbox_name="$1"
     if [[ -z "$sandbox_name" ]]; then
-        echo "Error: No sandbox name provided for delete command."
+        error "No sandbox name provided for delete command."
         exit 1
     fi
 
@@ -218,61 +219,56 @@ delete_sandbox() {
     mountpoint="${MOUNTPOINT_DIR}/${sandbox_name}"
 
     if [[ ! -f "$img_file" ]]; then
-        echo "Error: Sandbox image '${img_file}' does not exist."
+        error "Sandbox image '${img_file}' does not exist."
         exit 1
     fi
 
-    echo "Are you sure you want to permanently delete sandbox '$sandbox_name'?"
+    warn "Are you sure you want to permanently delete sandbox '$sandbox_name'?"
     read -p "Type 'yes' to confirm: " confirm
     if [[ "$confirm" != "yes" ]]; then
-        echo "Deletion cancelled."
+        log_msg "Deletion cancelled."
         exit 0
     fi
 
-    # Check if sandbox is mounted, and if so, attempt to unmount and close.
     if mountpoint -q "$mountpoint"; then
-        echo "Unmounting sandbox from '$mountpoint'..."
+        log_msg "Unmounting sandbox from '$mountpoint'..."
         sudo umount "$mountpoint"
         if [[ $? -ne 0 ]]; then
-            echo "Error: Could not unmount '$mountpoint'. Aborting deletion."
+            error "Could not unmount '$mountpoint'. Aborting deletion."
             exit 1
         fi
     fi
 
-    # Close LUKS container if open.
     if sudo cryptsetup status "$sandbox_name" >/dev/null 2>&1; then
-        echo "Closing open LUKS container for '$sandbox_name'..."
+        log_msg "Closing open LUKS container for '$sandbox_name'..."
         sudo cryptsetup luksClose "$sandbox_name"
         if [[ $? -ne 0 ]]; then
-            echo "Error: Could not close the LUKS container '$sandbox_name'. Aborting deletion."
+            error "Could not close the LUKS container '$sandbox_name'. Aborting deletion."
             exit 1
         fi
     fi
 
-    # Remove sandbox image file
-    echo "Deleting sandbox image '$img_file'..."
+    log_msg "Deleting sandbox image '$img_file'..."
     rm -f "$img_file"
     if [[ $? -ne 0 ]]; then
-        echo "Error deleting '$img_file'."
+        error "Error deleting '$img_file'."
         exit 1
     fi
 
-    # Remove mountpoint directory if it exists and is empty
     if [[ -d "$mountpoint" ]]; then
-        echo "Removing mountpoint directory '$mountpoint'..."
+        log_msg "Removing mountpoint directory '$mountpoint'..."
         rmdir "$mountpoint" 2>/dev/null
         if [[ $? -ne 0 ]]; then
-            echo "Warning: Could not remove mountpoint directory. It may not be empty."
+            warn "Could not remove mountpoint directory. It may not be empty."
         fi
     fi
 
-    echo "Sandbox '$sandbox_name' has been permanently deleted."
+    log_msg "Sandbox '$sandbox_name' has been permanently deleted."
 }
 
 ######################################################################
 # Main script execution
 ######################################################################
-# Check cryptsetup first
 check_cryptsetup
 
 cmd="$1"
@@ -298,7 +294,7 @@ case "$cmd" in
         show_help
         ;;
     *)
-        echo "Unknown command: $cmd"
+        error "Unknown command: $cmd"
         show_help
         exit 1
         ;;
