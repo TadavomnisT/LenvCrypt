@@ -2,7 +2,8 @@
 
 # LenvCrypt: Encrypted Linux Environment. A secure, password-protected sandbox storage for GNU/Linux.
 
-# AUTHOR :            TadavomnisT (Behrad.B)}
+# VERSION :           1.0.0
+# AUTHOR :            TadavomnisT (Behrad.B)
 # Repo :              https://github.com/TadavomnisT/LenvCrypt
 # REPORTING BUGS :    https://github.com/TadavomnisT/LenvCrypt/issues
 # COPYRIGHT :
@@ -13,6 +14,8 @@
 # lenvcrypt.sh - Manage encrypted sandboxes with cryptsetup
 # This script can create, open, close, list, delete sandboxes, and show help.
 # Directories used: ./Sandboxes/ to store .img files, and ./Mountpoints/ to mount opened sandboxes.
+
+VERSION="1.0.0"
 
 # Colors for Terminal
 RED=$'\033[31m'
@@ -84,6 +87,7 @@ show_help() {
     cat <<EOF
 ${MAGENTA}LenvCrypt:${NC} Encrypted Linux Environment. A secure, password-protected sandbox storage for GNU/Linux.
 
+VERSION :           ${VERSION}
 AUTHOR :            TadavomnisT (Behrad.B)}
 Repo :              https://github.com/TadavomnisT/LenvCrypt
 REPORTING BUGS :    https://github.com/TadavomnisT/LenvCrypt/issues
@@ -110,7 +114,14 @@ Commands:
                    Example: $0 delete mysandbox
   ${GREEN}help, -h, --help${NC}
             => Display this help information.
+  ${GREEN}version, -v, --version${NC}
+            => Display LenvCrypt's version.
 EOF
+}
+
+# Display version information
+show_version() {
+    echo "LenvCrypt version ${VERSION}"
 }
 
 # Create a new sandbox
@@ -353,6 +364,9 @@ case "$cmd" in
     delete)
         delete_sandbox "$sandbox_param"
         ;;
+    version|-v|--version)
+        show_version
+        ;;
     help|-h|--help|"")
         show_help
         ;;
@@ -362,5 +376,6 @@ case "$cmd" in
         exit 1
         ;;
 esac
+
 
 exit 0
