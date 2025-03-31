@@ -1,7 +1,7 @@
 #!/bin/bash
 # lenvcrypt.sh - Manage encrypted sandboxes with cryptsetup
-# This script can create, open, close, list, and show help for sandboxes.
-# Directories used: ./sandboxes/ to store .img files, and ./mountpoints/ to mount opened sandboxes.
+# This script can create, open, close, list, delete sandboxes, and show help.
+# Directories used: ./Sandboxes/ to store .img files, and ./Mountpoints/ to mount opened sandboxes.
 
 # Directories
 SANDBOX_DIR="./Sandboxes"
@@ -47,6 +47,9 @@ Commands:
               Example: $0 close mysandbox
   list      => List all existing sandboxes.
               Example: $0 list
+  delete    => Delete an existing sandbox.
+              This will remove the .img file and associated mountpoint.
+              Example: $0 delete mysandbox
   help, -h, --help
               => Display this help information.
 
@@ -203,6 +206,69 @@ list_sandboxes() {
     fi
 }
 
+# Delete a sandbox: prompt confirmation, unmount/close if needed, and remove files.
+delete_sandbox() {
+    sandbox_name="$1"
+    if [[ -z "$sandbox_name" ]]; then
+        echo "Error: No sandbox name provided for delete command."
+        exit 1
+    fi
+
+    img_file="${SANDBOX_DIR}/${sandbox_name}.img"
+    mountpoint="${MOUNTPOINT_DIR}/${sandbox_name}"
+
+    if [[ ! -f "$img_file" ]]; then
+        echo "Error: Sandbox image '${img_file}' does not exist."
+        exit 1
+    fi
+
+    echo "Are you sure you want to permanently delete sandbox '$sandbox_name'?"
+    read -p "Type 'yes' to confirm: " confirm
+    if [[ "$confirm" != "yes" ]]; then
+        echo "Deletion cancelled."
+        exit 0
+    fi
+
+    # Check if sandbox is mounted, and if so, attempt to unmount and close.
+    if mountpoint -q "$mountpoint"; then
+        echo "Unmounting sandbox from '$mountpoint'..."
+        sudo umount "$mountpoint"
+        if [[ $? -ne 0 ]]; then
+            echo "Error: Could not unmount '$mountpoint'. Aborting deletion."
+            exit 1
+        fi
+    fi
+
+    # Close LUKS container if open.
+    if sudo cryptsetup status "$sandbox_name" >/dev/null 2>&1; then
+        echo "Closing open LUKS container for '$sandbox_name'..."
+        sudo cryptsetup luksClose "$sandbox_name"
+        if [[ $? -ne 0 ]]; then
+            echo "Error: Could not close the LUKS container '$sandbox_name'. Aborting deletion."
+            exit 1
+        fi
+    fi
+
+    # Remove sandbox image file
+    echo "Deleting sandbox image '$img_file'..."
+    rm -f "$img_file"
+    if [[ $? -ne 0 ]]; then
+        echo "Error deleting '$img_file'."
+        exit 1
+    fi
+
+    # Remove mountpoint directory if it exists and is empty
+    if [[ -d "$mountpoint" ]]; then
+        echo "Removing mountpoint directory '$mountpoint'..."
+        rmdir "$mountpoint" 2>/dev/null
+        if [[ $? -ne 0 ]]; then
+            echo "Warning: Could not remove mountpoint directory. It may not be empty."
+        fi
+    fi
+
+    echo "Sandbox '$sandbox_name' has been permanently deleted."
+}
+
 ######################################################################
 # Main script execution
 ######################################################################
@@ -224,6 +290,9 @@ case "$cmd" in
         ;;
     list)
         list_sandboxes
+        ;;
+    delete)
+        delete_sandbox "$sandbox_param"
         ;;
     help|-h|--help|"")
         show_help
