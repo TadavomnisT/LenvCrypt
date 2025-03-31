@@ -1,11 +1,20 @@
 #!/bin/bash
+
+# LenvCrypt: Encrypted Linux Environment. A secure, password-protected sandbox storage for GNU/Linux.
+
+# AUTHOR :            TadavomnisT (Behrad.B)}
+# Repo :              https://github.com/TadavomnisT/LenvCrypt
+# REPORTING BUGS :    https://github.com/TadavomnisT/LenvCrypt/issues
+# COPYRIGHT :
+#     Copyright (c) 2025   License GPLv3+                                                                                               
+#     This is free software: you are free to change and redistribute it.                                                                
+#     There is NO WARRANTY, to the extent permitted by law.  
+
 # lenvcrypt.sh - Manage encrypted sandboxes with cryptsetup
 # This script can create, open, close, list, delete sandboxes, and show help.
 # Directories used: ./Sandboxes/ to store .img files, and ./Mountpoints/ to mount opened sandboxes.
 
-# -----------------------
-# Color definitions
-# -----------------------
+# Colors for Terminal
 RED=$'\033[31m'
 GREEN=$'\033[32m'
 BLUE=$'\033[34m'
@@ -66,7 +75,7 @@ show_help() {
     echo -e "#|  @   @   #        X      _      X   \"\"\"\"    \"\"    ####\"  ## \"\"\"       \"\"\""
     echo -e "#|   \\#/    #        X    (   )    X                  ###   ##"
     echo -e "#|                   X     | |     X                  ##"
-    echo -e "#|                   X      ~      X                ###"
+    echo -e "#|                   X      ~      X      #############"
     echo -e "#|                   XXXXXXXXXXXXXXX"
     echo -e "#|"
     echo -e "#|                          ###################"
@@ -321,7 +330,7 @@ delete_sandbox() {
 }
 
 ######################################################################
-# Main script execution
+# Main script
 ######################################################################
 check_cryptsetup
 
