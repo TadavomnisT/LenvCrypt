@@ -104,7 +104,13 @@ EOF
 
 # Create a new sandbox
 create_sandbox() {
-    read -p "Enter sandbox name: " sandbox_name
+    
+    # Check if a name is passed as a parameter
+    sandbox_name="$1"
+    if [[ -z "$sandbox_name" ]]; then
+        read -p "Enter sandbox name: " sandbox_name
+    fi
+
     if [[ -z "$sandbox_name" ]]; then
         error "Sandbox name cannot be empty."
         exit 1
@@ -309,7 +315,7 @@ sandbox_param="$2"
 
 case "$cmd" in
     create)
-        create_sandbox
+        create_sandbox "$sandbox_param"
         ;;
     open)
         open_sandbox "$sandbox_param"
