@@ -1,18 +1,11 @@
 
 # LenvCrypt
 
-WIP: Work In Progress,... __DO NOT USE THIS CODE YET!__ 
+ LenvCrypt: Encrypted Linux Environment. A secure, password-protected sandbox storage for GNU/Linux. 
 
 ![LenvCrypt Logo](./Docs/Images/LenvCrypt_logo.png)
 
-**LenvCrypt**: Linux Environment Encrypted, is a secure, password-protected sandbox storage designed to create an encrypted environment on GNU/Linux systems. LenvCrypt works based on _LUKS_, and aims to provide users with a safe space to run programs and store sensitive data a part of the host system without the risk of exposure.
-
-## How does it work?
-
-LUKS (_Linux Unified Key Setup_) is a standard for Linux disk encryption. LUKS implements a platform-independent standard on-disk format for use in various tools. This facilitates compatibility and interoperability among different programs and operating systems, and assures that they all implement password management in a secure and documented manner.[_from Wikipedia_]
-
-Using LUKS, we can create an encrypted container that we can mount and use as a sandbox.
-
+**LenvCrypt**: __L__inux __Env__ironment En__crypt__ed, is a secure, password-protected sandbox storage designed to create an encrypted environment on GNU/Linux systems. LenvCrypt works based on _LUKS_, and aims to provide users with a safe space to run programs and store sensitive data a part of the host system without the risk of exposure.
 
 
 ## Features
@@ -40,36 +33,119 @@ To install LenvCrypt, follow these steps:
    chmod +x lenvcrypt.sh
    ```
 
-3. **Run the application**:
+3. **Run the program**:
    ```bash
    ./lenvcrypt.sh
    ```
 
-## Usage (_NEEDS A CHANGE_)
+## Usage
 
-To create a new encrypted environment, run the following command:
 
-```bash
-./lenvcrypt.sh create
+```shell
+Usage: ./lenvcrypt.sh <command> [sandbox_name]
+
+Commands:
+  create    => Create a new sandbox.
+                   The script will prompt for a sandbox name and a size.
+                   Example: ./lenvcrypt.sh create
+                            ./lenvcrypt.sh create mysandbox
+  open      => Open an existing sandbox.
+                   Example: ./lenvcrypt.sh open mysandbox
+  close     => Close an opened sandbox.
+                   Example: ./lenvcrypt.sh close mysandbox
+  list      => List all existing sandboxes.
+                   Example: ./lenvcrypt.sh list
+  delete    => Delete an existing sandbox.
+                   This will remove the .img file and associated mountpoint.
+                   Example: ./lenvcrypt.sh delete mysandbox
+  help, -h, --help
+            => Display this help information.
 ```
 
-You will be prompted to enter a password for the new environment. Once created, you can enter the environment using:
-
 ```bash
-./lenvcrypt.sh enter
+./lenvcrypt.sh <command> [sandbox_name]
 ```
 
-To exit the environment, simply type `exit`.
+  **Commands:**
+
+- **create**  
+  Create a new sandbox. The script will prompt for both a sandbox name (if not provided) and a size.  
+  ```bash
+  ./lenvcrypt.sh create
+  ./lenvcrypt.sh create mysandbox
+  ```
+
+- **open**  
+  Open an existing sandbox.  
+  ```bash
+  ./lenvcrypt.sh open mysandbox
+  ```
+
+- **close**  
+  Close an opened sandbox.  
+  ```bash
+  ./lenvcrypt.sh close mysandbox
+  ```
+
+- **list**  
+  List all existing sandboxes.  
+  ```bash
+  ./lenvcrypt.sh list
+  ```
+
+- **delete**  
+  Permanently delete an existing sandbox. This will remove both the `.img` file and its associated mountpoint.  
+  ```bash
+  ./lenvcrypt.sh delete mysandbox
+  ```
+
+- **help, -h, --help**  
+  Display help information about the usage and commands.  
+  ```bash
+  ./lenvcrypt.sh help
+  ```
+
+
+## Important Warning
+
+__BE WARNED__ that if a sandbox is open, any user on your system may access it. **DON'T FORGET to close the sandbox after you're done** to ensure the security of your encrypted storage.
+
+When a sandbox is open, its decrypted content (plain data) is mounted and accessible via a mountpoint (located in the `./Mountpoints/` directory), meaning the security provided by encryption remains only active when the sandbox is closed. ___Always close your sandbox when you are not using it.___
+
+
+
+## How does it work?
+
+
+LenvCrypt uses LUKS (_Linux Unified Key Setup_) to provide a secure, encrypted container where you can safely store and work with files. LUKS is a widely adopted standard for Linux disk encryption that implements a platform-independent on-disk format. This guarantees compatibility and interoperability between various programs and operating systems while ensuring secure password management (as described on [Wikipedia](https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup)).
+
+Using LUKS, LenvCrypt creates an encrypted disk image (a file with a .img extension) that serves as a container for your sandbox. Here’s a an overview of what goes under the hood:
+
+- **Creating a Sandbox:**  
+  LenvCrypt first creates an empty disk image of a specified size. It then encrypts the image using LUKS, prompting you for a password during setup. After formatting the encrypted container with the ext4 filesystem, a dedicated mount point is created for later use.
+
+- **Opening a Sandbox:**  
+  When you open a sandbox, LenvCrypt uses your password to unlock (decrypt) the LUKS container. The encrypted disk image is then mounted to a designated mount point (`./Mountpoints/<sandbox_name>`) so that you can access and modify the files stored inside.
+
+- **Closing and Deleting Sandboxes:**  
+  Closing a sandbox involves unmounting the filesystem and relocking the LUKS container to ensure that no unauthorized access is possible while the sandbox is not in use. The delete command will permanently remove the disk image and its associated mount point (with user confirmation), so be sure to close and back up your sandbox if necessary before deleting it.
+
+This design ensures that your sandbox files remain encrypted at rest and only become accessible when you intentionally unlock and mount the container. This approach provides an extra layer of security for sensitive data while using Linux.
+
+
+## ScreenShots
+
+* I should add something here...
+
 
 ## Contributing
 
-Contributions are welcome! If you would like to contribute to LenvCrypt, please follow these steps:
+Feel free to get involved! If you would like to contribute to LenvCrypt, please follow these steps:
 
 1. Fork the repository.
-2. Create a new branch for your feature or bug fix.
-3. Make your changes and commit them with clear messages.
-4. Push your branch to your forked repository.
-5. Open a pull request with a description of your changes.
+2. Add a feature or bug a fix!
+3. Make your changes and commit them with clear messages (Explain what you did).
+4. Open a pull request with a description of your changes.
 
 ## License
 
