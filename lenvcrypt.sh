@@ -48,24 +48,57 @@ check_cryptsetup() {
 
 # Usage/help info
 show_help() {
+    # Print a logo
+    echo -e "\033[31m        #/##################| mm"
+    echo -e "      #/*                  #| ##"
+    echo -e "    #/  #                  #| ##         m####m   ##m####m  ##m  m##"
+    echo -e "  #/    #                  #| ##        ##mmmm##  ##\"   ##   ##  ##"
+    echo -e "#|#######                  #| ##        ##\"\"\"\"\"\"  ##    ##   \"#mm#\""
+    echo -e "#|                         #| ##mmmmmm  \"##mmmm#  ##    ##    ####"
+    echo -e "#|  #     /#\\    #         #| \"\"\"\"\"\"\"    \"\"\"\"\"   \"\"    \"\"     \"\""
+    echo -e "#|  #    @   @   #         #|          mmmm"
+    echo -e "#|  #    @   @   #       .%%%%%%.    ##\"\"\"#                            ##"
+    echo -e "#|  #     \\#/    #     .%        %. ##\"        ##m####      ##m###m   #######"
+    echo -e "#|                    %           % ##         ##\"          ##\"  \"##    ##"
+    echo -e "#|   /#\\    #         %           % ##m        ##  \"##  ### ##    ##    ##"
+    echo -e "#|  @   @   #        XXXXXXXXXXXXXXX ##mmmm#   ##   ##m ##  ###mm##\"    ##mmm"
+    echo -e "#|  @   @   #        X      _      X   \"\"\"\"    \"\"    ####\"  ## \"\"\"       \"\"\""
+    echo -e "#|   \\#/    #        X    (   )    X                  ###   ##"
+    echo -e "#|                   X     | |     X                  ##"
+    echo -e "#|                   X      ~      X                ###"
+    echo -e "#|                   XXXXXXXXXXXXXXX"
+    echo -e "#|"
+    echo -e "#|                          ###################"
+    echo -e "#|##########################/"
+    echo -e "\033[0m"  # Reset to default color
     cat <<EOF
+${MAGENTA}LenvCrypt:${NC} Encrypted Linux Environment. A secure, password-protected sandbox storage for GNU/Linux.
+
+AUTHOR :            TadavomnisT (Behrad.B)}
+Repo :              https://github.com/TadavomnisT/LenvCrypt
+REPORTING BUGS :    https://github.com/TadavomnisT/LenvCrypt/issues
+COPYRIGHT :
+    Copyright (c) 2025   License GPLv3+
+    This is free software: you are free to change and redistribute it.
+    There is NO WARRANTY, to the extent permitted by law.
+
 [${YELLOW}HELP${NC}]: Usage: $0 <command> [sandbox_name]
 
 Commands:
-  create    => Create a new sandbox.
-              The script will prompt for a sandbox name and a size.
-              Example: $0 create
-  open      => Open an existing sandbox.
-              Example: $0 open mysandbox
-  close     => Close an opened sandbox.
-              Example: $0 close mysandbox
-  list      => List all existing sandboxes.
-              Example: $0 list
-  delete    => Delete an existing sandbox.
-              This will remove the .img file and associated mountpoint.
-              Example: $0 delete mysandbox
-  help, -h, --help
-              => Display this help information.
+  ${GREEN}create${NC}    => Create a new sandbox.
+                   The script will prompt for a sandbox name and a size.
+                   Example: $0 create
+  ${GREEN}open${NC}      => Open an existing sandbox.
+                   Example: $0 open mysandbox
+  ${GREEN}close${NC}     => Close an opened sandbox.
+                   Example: $0 close mysandbox
+  ${GREEN}list${NC}      => List all existing sandboxes.
+                   Example: $0 list
+  ${GREEN}delete${NC}    => Delete an existing sandbox.
+                   This will remove the .img file and associated mountpoint.
+                   Example: $0 delete mysandbox
+  ${GREEN}help, -h, --help${NC}
+            => Display this help information.
 EOF
 }
 
