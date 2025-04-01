@@ -2,7 +2,7 @@
 
 # LenvCrypt: Encrypted Linux Environment. A secure, password-protected sandbox storage for GNU/Linux.
 
-# VERSION :           1.0.0
+# VERSION :           1.0.1
 # AUTHOR :            TadavomnisT (Behrad.B)
 # Repo :              https://github.com/TadavomnisT/LenvCrypt
 # REPORTING BUGS :    https://github.com/TadavomnisT/LenvCrypt/issues
@@ -12,10 +12,10 @@
 #     There is NO WARRANTY, to the extent permitted by law.  
 
 # lenvcrypt.sh - Manage encrypted sandboxes with cryptsetup
-# This script can create, open, close, list, delete sandboxes, and show help.
+# This script can create, open, close, list, delete, export, and import sandboxes, and show help.
 # Directories used: ./Sandboxes/ to store .img files, and ./Mountpoints/ to mount opened sandboxes.
 
-VERSION="1.0.0"
+VERSION="1.0.1"
 
 # Colors for Terminal
 RED=$'\033[31m'
@@ -88,7 +88,7 @@ show_help() {
 ${MAGENTA}LenvCrypt:${NC} Encrypted Linux Environment. A secure, password-protected sandbox storage for GNU/Linux.
 
 VERSION :           ${VERSION}
-AUTHOR :            TadavomnisT (Behrad.B)}
+AUTHOR :            TadavomnisT (Behrad.B)
 Repo :              https://github.com/TadavomnisT/LenvCrypt
 REPORTING BUGS :    https://github.com/TadavomnisT/LenvCrypt/issues
 COPYRIGHT :
@@ -96,7 +96,7 @@ COPYRIGHT :
     This is free software: you are free to change and redistribute it.
     There is NO WARRANTY, to the extent permitted by law.
 
-[${YELLOW}HELP${NC}]: Usage: $0 <command> [sandbox_name]
+[${YELLOW}HELP${NC}]: Usage: $0 <command> [options/sandbox_name]
 
 Commands:
   ${GREEN}create${NC}    => Create a new sandbox.
@@ -112,6 +112,11 @@ Commands:
   ${GREEN}delete${NC}    => Delete an existing sandbox.
                    This will remove the .img file and associated mountpoint.
                    Example: $0 delete mysandbox
+  ${GREEN}export${NC}    => Export a sandbox image to a specified file.
+                   Example: $0 export mysandbox /path/to/export.img
+  ${GREEN}import${NC}    => Import a sandbox image from a file.
+                   The sandbox will be imported and stored as <sandbox_name>.img.
+                   Example: $0 import mysandbox /path/to/import.img
   ${GREEN}help, -h, --help${NC}
             => Display this help information.
   ${GREEN}version, -v, --version${NC}
@@ -126,7 +131,6 @@ show_version() {
 
 # Create a new sandbox
 create_sandbox() {
-    
     # Check if a name is passed as a parameter
     sandbox_name="$1"
     if [[ -z "$sandbox_name" ]]; then
@@ -234,8 +238,8 @@ open_sandbox() {
     echo "  ${GREEN}$mountpoint${NC}"
     echo ""
     help_msg "You can now access your sandbox files."
-    help_msg "You may need to run ${RED}'sudo su'${NC} over there to get the permission to work with files."
-    warn "${RED}BE WARNED${NC} ${BLUE}that the sanbox '$sandbox_name' is open and any user may access it,${NC} ${RED}DON'T FORGET${NC} ${BLUE}to close it after you're done!${NC}"
+    help_msg "You may need to run ${RED}'sudo su'${NC} over there to get permission to work with files."
+    warn "${RED}BE WARNED${NC} ${BLUE}that the sandbox '$sandbox_name' is open and any user may access it,${NC} ${RED}DON'T FORGET${NC} ${BLUE}to close it after you're done!${NC}"
 }
 
 # Close an opened sandbox
@@ -340,6 +344,79 @@ delete_sandbox() {
     log_msg "Sandbox '$sandbox_name' has been permanently deleted."
 }
 
+# Export a sandbox image to a given file
+export_sandbox() {
+    sandbox_name="$1"
+    export_dest="$2"
+
+    if [[ -z "$sandbox_name" ]]; then
+        error "No sandbox name provided for export command."
+        exit 1
+    fi
+
+    if [[ -z "$export_dest" ]]; then
+        read -p "Enter destination path for export (e.g., /path/to/export.img): " export_dest
+    fi
+
+    if [[ -z "$export_dest" ]]; then
+        error "Export destination cannot be empty."
+        exit 1
+    fi
+
+    img_file="${SANDBOX_DIR}/${sandbox_name}.img"
+    if [[ ! -f "$img_file" ]]; then
+        error "Sandbox image '$img_file' does not exist."
+        exit 1
+    fi
+
+    log_msg "Exporting sandbox '$sandbox_name' to '$export_dest'..."
+    cp "$img_file" "$export_dest"
+    if [[ $? -ne 0 ]]; then
+        error "Error exporting sandbox."
+        exit 1
+    fi
+    log_msg "Sandbox '$sandbox_name' exported successfully."
+}
+
+# Import a sandbox image from a given file
+import_sandbox() {
+    sandbox_name="$1"
+    import_src="$2"
+
+    if [[ -z "$sandbox_name" ]]; then
+        error "No sandbox name provided for import command."
+        exit 1
+    fi
+
+    if [[ -z "$import_src" ]]; then
+        read -p "Enter source file path to import (e.g., /path/to/import.img): " import_src
+    fi
+
+    if [[ -z "$import_src" ]]; then
+        error "Import source cannot be empty."
+        exit 1
+    fi
+
+    if [[ ! -f "$import_src" ]]; then
+        error "Source file '$import_src' does not exist."
+        exit 1
+    fi
+
+    dest_file="${SANDBOX_DIR}/${sandbox_name}.img"
+    if [[ -f "$dest_file" ]]; then
+        error "A sandbox with the name '$sandbox_name' already exists."
+        exit 1
+    fi
+
+    log_msg "Importing sandbox image from '$import_src' as '$sandbox_name'..."
+    cp "$import_src" "$dest_file"
+    if [[ $? -ne 0 ]]; then
+        error "Error importing sandbox."
+        exit 1
+    fi
+    log_msg "Sandbox '$sandbox_name' imported successfully."
+}
+
 ######################################################################
 # Main script
 ######################################################################
@@ -347,6 +424,7 @@ check_cryptsetup
 
 cmd="$1"
 sandbox_param="$2"
+file_param="$3"
 
 case "$cmd" in
     create)
@@ -364,6 +442,12 @@ case "$cmd" in
     delete)
         delete_sandbox "$sandbox_param"
         ;;
+    export)
+        export_sandbox "$sandbox_param" "$file_param"
+        ;;
+    import)
+        import_sandbox "$sandbox_param" "$file_param"
+        ;;
     version|-v|--version)
         show_version
         ;;
@@ -376,6 +460,5 @@ case "$cmd" in
         exit 1
         ;;
 esac
-
 
 exit 0
