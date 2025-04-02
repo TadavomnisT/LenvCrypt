@@ -176,6 +176,14 @@ Using LUKS, LenvCrypt creates an encrypted disk image (a file with a .img extens
 
 This design ensures that your safebox files remain encrypted at rest and only become accessible when you intentionally unlock and mount the container. This approach provides an extra layer of security for sensitive data while using Linux.
 
+### Safebox.img Format
+
+Inspecting `.img` files will provide a detailed explanation of what goes on under the hood:
+```shell
+file Safebox.img 
+Safebox.img: LUKS encrypted file, ver 2, header size 16384, ID 3, algo sha256, salt 0x*********..., UUID: ****-*****-****-****-********, crc **************..., at 0x1000 {"keyslots":{"0":{"type":"luks2","key_size":64,"af":{"type":"luks1","stripes":4000,"hash":"sha256"},"area":{"type":"raw","offse
+``` 
+This output also includes metadata about the hash algorithm, salt value, encryption algorithm, etc., presented in JSON format. For further investigation, you can check out LUKS online.
 
 ## ScreenShots
 
