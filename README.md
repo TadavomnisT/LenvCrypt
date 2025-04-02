@@ -187,7 +187,7 @@ This design ensures that your safebox files remain encrypted at rest and only be
 Feel free to get involved! If you would like to contribute to LenvCrypt, please follow these steps:
 
 1. Fork the repository.
-2. Add a feature or bug a fix!
+2. Add a feature or fix a bug!
 3. Make your changes and commit them with clear messages (Explain what you did).
 4. Open a pull request with a description of your changes.
 
