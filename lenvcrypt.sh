@@ -2,7 +2,7 @@
 
 # LenvCrypt: Encrypted Linux Environment. A secure, password-protected safebox storage for GNU/Linux.
 
-# VERSION :           1.0.1
+# VERSION :           2.0.0
 # AUTHOR :            TadavomnisT (Behrad.B)
 # Repo :              https://github.com/TadavomnisT/LenvCrypt
 # REPORTING BUGS :    https://github.com/TadavomnisT/LenvCrypt/issues
@@ -11,7 +11,7 @@
 #     This is free software: you are free to change and redistribute it.
 #     There is NO WARRANTY, to the extent permitted by law.  
 
-VERSION="1.0.1"
+VERSION="2.0.0"
 
 # Colors for Terminal
 RED=$'\033[31m'
