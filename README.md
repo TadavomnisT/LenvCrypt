@@ -1,14 +1,13 @@
-
 # LenvCrypt
 
 ![LenvCrypt Logo](./Docs/Images/LenvCrypt_logo.png)
 
-**LenvCrypt**: **L**inux **Env**ironment En**crypt**ed, is a secure, password-protected sandbox storage designed to create an encrypted environment on GNU/Linux systems. LenvCrypt works based on _LUKS_, and aims to provide users with a safe space to run programs and store sensitive data a part of the host system without the risk of exposure.
+**LenvCrypt**: **L**inux **Env**ironment En**crypt**ed, is a secure, password-protected safebox storage designed to create an encrypted environment on GNU/Linux systems. LenvCrypt works based on _LUKS_, and aims to provide users with a safe space to run programs and store sensitive data a part of the host system without the risk of exposure.
 
 
 ## Features
 
-- **Encryption**: All data within the LenvCrypt environment is encrypted using strong encryption algorithms to ensure confidentiality. Access to the sandbox is secured with a user-defined password.
+- **Encryption**: All data within the LenvCrypt environment is encrypted using strong encryption algorithms to ensure confidentiality. Access to the safebox is secured with a user-defined password.
 
 - **Open Source**: LenvCrypt is licensed under the GPL3, allowing users to modify and distribute the software freely.
 
@@ -40,39 +39,39 @@ To install LenvCrypt, follow these steps:
 
 
 ```shell
-Usage: ./lenvcrypt.sh <command> [options/sandbox_name] [extra_option]
+Usage: ./lenvcrypt.sh <command> [options/safebox_name] [extra_option]
 
 Commands:
-  create (-c, --create) => Create a new sandbox.
-                   The script will prompt for a sandbox name and a size.
+  create (-c, --create) => Create a new safebox.
+                   The script will prompt for a safebox name and a size.
                    Example: ./lenvcrypt.sh create
-                            ./lenvcrypt.sh -c mysandbox
+                            ./lenvcrypt.sh -c mysafebox
 
-  open (-o, --open)   => Open an existing sandbox.
-                   Example: ./lenvcrypt.sh open mysandbox
-                            ./lenvcrypt.sh --open mysandbox
+  open (-o, --open)   => Open an existing safebox.
+                   Example: ./lenvcrypt.sh open mysafebox
+                            ./lenvcrypt.sh --open mysafebox
 
-  close (-c, --close)  => Close an opened sandbox.
-                   Example: ./lenvcrypt.sh close mysandbox
-                            ./lenvcrypt.sh -c mysandbox
+  close (-c, --close)  => Close an opened safebox.
+                   Example: ./lenvcrypt.sh close mysafebox
+                            ./lenvcrypt.sh -c mysafebox
 
-  list (-l, --list)   => List all existing sandboxes.
+  list (-l, --list)   => List all existing safeboxes.
                    Example: ./lenvcrypt.sh list
                             ./lenvcrypt.sh --list
 
-  delete (-d, --delete) => Delete an existing sandbox.
+  delete (-d, --delete) => Delete an existing safebox.
                    This removes the .img file and associated mountpoint.
-                   Example: ./lenvcrypt.sh delete mysandbox
-                            ./lenvcrypt.sh -d mysandbox
+                   Example: ./lenvcrypt.sh delete mysafebox
+                            ./lenvcrypt.sh -d mysafebox
 
-  export (-e, --export) => Export a sandbox image to a specified file.
-                   Example: ./lenvcrypt.sh export mysandbox /path/to/export.img
-                            ./lenvcrypt.sh --export mysandbox /path/to/export.img
+  export (-e, --export) => Export a safebox image to a specified file.
+                   Example: ./lenvcrypt.sh export mysafebox /path/to/export.img
+                            ./lenvcrypt.sh --export mysafebox /path/to/export.img
 
-  import (-i, --import) => Import a sandbox image from a file.
-                   The sandbox will be stored as <sandbox_name>.img.
-                   Example: ./lenvcrypt.sh import mysandbox /path/to/import.img
-                            ./lenvcrypt.sh -i mysandbox /path/to/import.img
+  import (-i, --import) => Import a safebox image from a file.
+                   The safebox will be stored as <safebox_name>.img.
+                   Example: ./lenvcrypt.sh import mysafebox /path/to/import.img
+                            ./lenvcrypt.sh -i mysafebox /path/to/import.img
 
   version (-v, --version) => Display LenvCrypt version.
                    Example: ./lenvcrypt.sh version
@@ -84,59 +83,79 @@ Commands:
 ```
 
 ```bash
-./lenvcrypt.sh <command> [sandbox_name]
+./lenvcrypt.sh <command> [options/safebox_name] [extra_option]
 ```
 
-  **Commands:**
+**Commands:**
 
 - **create**  
-  Create a new sandbox. The script will prompt for both a sandbox name (if not provided) and a size.  
+  Create a new safebox. The script will prompt for a safebox name and a size if not provided.  
   ```bash
   ./lenvcrypt.sh create
-  ./lenvcrypt.sh create mysandbox
+  ./lenvcrypt.sh -c mysafebox
   ```
 
 - **open**  
-  Open an existing sandbox.  
+  Open an existing safebox.  
   ```bash
-  ./lenvcrypt.sh open mysandbox
+  ./lenvcrypt.sh open mysafebox
+  ./lenvcrypt.sh --open mysafebox
   ```
 
 - **close**  
-  Close an opened sandbox.  
+  Close an opened safebox.  
   ```bash
-  ./lenvcrypt.sh close mysandbox
+  ./lenvcrypt.sh close mysafebox
+  ./lenvcrypt.sh -c mysafebox
   ```
 
 - **list**  
-  List all existing sandboxes.  
+  List all existing safeboxes.  
   ```bash
   ./lenvcrypt.sh list
+  ./lenvcrypt.sh --list
   ```
 
 - **delete**  
-  Permanently delete an existing sandbox. This will remove both the `.img` file and its associated mountpoint.  
+  Delete an existing safebox. This command removes the .img file and its associated mountpoint.  
   ```bash
-  ./lenvcrypt.sh delete mysandbox
+  ./lenvcrypt.sh delete mysafebox
+  ./lenvcrypt.sh -d mysafebox
   ```
 
-- **help, -h, --help**  
+- **export**  
+  Export a safebox image to a specified file.  
+  ```bash
+  ./lenvcrypt.sh export mysafebox /path/to/export.img
+  ./lenvcrypt.sh --export mysafebox /path/to/export.img
+  ```
+
+- **import**  
+  Import a safebox image from a file. The safebox will be stored as <safebox_name>.img.  
+  ```bash
+  ./lenvcrypt.sh import mysafebox /path/to/import.img
+  ./lenvcrypt.sh -i mysafebox /path/to/import.img
+  ```
+
+- **version**  
+  Display LenvCrypt version.  
+  ```bash
+  ./lenvcrypt.sh version
+  ./lenvcrypt.sh --version
+  ```
+
+- **help**  
   Display help information about the usage and commands.  
   ```bash
   ./lenvcrypt.sh help
-  ```
-
-- **version, -v, --version**  
-  Display LenvCrypt's version.  
-  ```bash
-  ./lenvcrypt.sh version
+  ./lenvcrypt.sh -h
   ```
 
 ## Important Warning
 
-**BE WARNED** that if a sandbox is open, any user on your system may access it. **DON'T FORGET to close the sandbox after you're done** to ensure the security of your encrypted storage.
+**BE WARNED** that if a safebox is open, any user on your system may access it. **DON'T FORGET to close the safebox after you're done** to ensure the security of your encrypted storage.
 
-When a sandbox is open, its decrypted content (plain data) is mounted and accessible via a mountpoint (located in the `./Mountpoints/` directory), meaning the security provided by encryption remains only active when the sandbox is closed. ***Always close your sandbox when you are not using it.***
+When a safebox is open, its decrypted content (plain data) is mounted and accessible via a mountpoint (located in the `./Mountpoints/` directory), meaning the security provided by encryption remains only active when the safebox is closed. ***Always close your safebox when you are not using it.***
 
 
 
@@ -144,18 +163,18 @@ When a sandbox is open, its decrypted content (plain data) is mounted and access
 
 LenvCrypt uses LUKS (_Linux Unified Key Setup_) to provide a secure, encrypted container where you can safely store and work with files. LUKS is a widely adopted standard for Linux disk encryption that implements a platform-independent on-disk format. This guarantees compatibility and interoperability between various programs and operating systems while ensuring secure password management (as described on [Wikipedia](https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup)).
 
-Using LUKS, LenvCrypt creates an encrypted disk image (a file with a .img extension) that serves as a container for your sandbox. Here’s a an overview of what goes under the hood:
+Using LUKS, LenvCrypt creates an encrypted disk image (a file with a .img extension) that serves as a container for your safebox. Here’s a an overview of what goes under the hood:
 
-- **Creating a Sandbox:**  
+- **Creating a Safebox:**  
   LenvCrypt first creates an empty disk image of a specified size. It then encrypts the image using LUKS, prompting you for a password during setup. After formatting the encrypted container with the ext4 filesystem, a dedicated mount point is created for later use.
 
-- **Opening a Sandbox:**  
-  When you open a sandbox, LenvCrypt uses your password to unlock (decrypt) the LUKS container. The encrypted disk image is then mounted to a designated mount point (`./Mountpoints/<sandbox_name>`) so that you can access and modify the files stored inside.
+- **Opening a Safebox:**  
+  When you open a safebox, LenvCrypt uses your password to unlock (decrypt) the LUKS container. The encrypted disk image is then mounted to a designated mount point (`./Mountpoints/<safebox_name>`) so that you can access and modify the files stored inside.
 
-- **Closing and Deleting Sandboxes:**  
-  Closing a sandbox involves unmounting the filesystem and relocking the LUKS container to ensure that no unauthorized access is possible while the sandbox is not in use. The delete command will permanently remove the disk image and its associated mount point (with user confirmation), so be sure to close and back up your sandbox if necessary before deleting it.
+- **Closing and Deleting Safeboxes:**  
+  Closing a safebox involves unmounting the filesystem and relocking the LUKS container to ensure that no unauthorized access is possible while the safebox is not in use. The delete command will permanently remove the disk image and its associated mount point (with user confirmation), so be sure to close and back up your safebox if necessary before deleting it.
 
-This design ensures that your sandbox files remain encrypted at rest and only become accessible when you intentionally unlock and mount the container. This approach provides an extra layer of security for sensitive data while using Linux.
+This design ensures that your safebox files remain encrypted at rest and only become accessible when you intentionally unlock and mount the container. This approach provides an extra layer of security for sensitive data while using Linux.
 
 
 ## ScreenShots
@@ -180,4 +199,3 @@ LenvCrypt is licensed under the [GNU General Public License v3.0](https://www.gn
 ## Contact
 
 For questions, suggestions, or feedback, please open an issue in the repository or contact me at behroora at YAHOO dot COM.
-
