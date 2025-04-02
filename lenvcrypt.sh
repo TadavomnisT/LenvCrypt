@@ -7,13 +7,9 @@
 # Repo :              https://github.com/TadavomnisT/LenvCrypt
 # REPORTING BUGS :    https://github.com/TadavomnisT/LenvCrypt/issues
 # COPYRIGHT :
-#     Copyright (c) 2025   License GPLv3+                                                                                               
-#     This is free software: you are free to change and redistribute it.                                                                
+#     Copyright (c) 2025   License GPLv3+
+#     This is free software: you are free to change and redistribute it.
 #     There is NO WARRANTY, to the extent permitted by law.  
-
-# lenvcrypt.sh - Manage encrypted sandboxes with cryptsetup
-# This script can create, open, close, list, delete, export, and import sandboxes, and show help.
-# Directories used: ./Sandboxes/ to store .img files, and ./Mountpoints/ to mount opened sandboxes.
 
 VERSION="1.0.1"
 
@@ -96,31 +92,47 @@ COPYRIGHT :
     This is free software: you are free to change and redistribute it.
     There is NO WARRANTY, to the extent permitted by law.
 
-[${YELLOW}HELP${NC}]: Usage: $0 <command> [options/sandbox_name]
+[${YELLOW}HELP${NC}]: Usage: $0 <command> [options/sandbox_name] [extra_option]
 
 Commands:
-  ${GREEN}create${NC}    => Create a new sandbox.
+  ${GREEN}create (-c, --create)${NC} => Create a new sandbox.
                    The script will prompt for a sandbox name and a size.
                    Example: $0 create
-                            $0 create mysandbox
-  ${GREEN}open${NC}      => Open an existing sandbox.
+                            $0 -c mysandbox
+
+  ${GREEN}open (-o, --open)${NC}   => Open an existing sandbox.
                    Example: $0 open mysandbox
-  ${GREEN}close${NC}     => Close an opened sandbox.
+                            $0 --open mysandbox
+
+  ${GREEN}close (-c, --close)${NC}  => Close an opened sandbox.
                    Example: $0 close mysandbox
-  ${GREEN}list${NC}      => List all existing sandboxes.
+                            $0 -c mysandbox
+
+  ${GREEN}list (-l, --list)${NC}   => List all existing sandboxes.
                    Example: $0 list
-  ${GREEN}delete${NC}    => Delete an existing sandbox.
-                   This will remove the .img file and associated mountpoint.
+                            $0 --list
+
+  ${GREEN}delete (-d, --delete)${NC} => Delete an existing sandbox.
+                   This removes the .img file and associated mountpoint.
                    Example: $0 delete mysandbox
-  ${GREEN}export${NC}    => Export a sandbox image to a specified file.
+                            $0 -d mysandbox
+
+  ${GREEN}export (-e, --export)${NC} => Export a sandbox image to a specified file.
                    Example: $0 export mysandbox /path/to/export.img
-  ${GREEN}import${NC}    => Import a sandbox image from a file.
-                   The sandbox will be imported and stored as <sandbox_name>.img.
+                            $0 --export mysandbox /path/to/export.img
+
+  ${GREEN}import (-i, --import)${NC} => Import a sandbox image from a file.
+                   The sandbox will be stored as <sandbox_name>.img.
                    Example: $0 import mysandbox /path/to/import.img
-  ${GREEN}help, -h, --help${NC}
-            => Display this help information.
-  ${GREEN}version, -v, --version${NC}
-            => Display LenvCrypt's version.
+                            $0 -i mysandbox /path/to/import.img
+
+  ${GREEN}version (-v, --version)${NC} => Display LenvCrypt version.
+                   Example: $0 version
+                            $0 --version
+
+  ${GREEN}help (-h, --help)${NC}    => Display this help information.
+                   Example: $0 help
+                            $0 -h
 EOF
 }
 
@@ -427,25 +439,25 @@ sandbox_param="$2"
 file_param="$3"
 
 case "$cmd" in
-    create)
+    create|-c|--create)
         create_sandbox "$sandbox_param"
         ;;
-    open)
+    open|-o|--open)
         open_sandbox "$sandbox_param"
         ;;
-    close)
+    close|-c|--close)
         close_sandbox "$sandbox_param"
         ;;
-    list)
+    list|-l|--list)
         list_sandboxes
         ;;
-    delete)
+    delete|-d|--delete)
         delete_sandbox "$sandbox_param"
         ;;
-    export)
+    export|-e|--export)
         export_sandbox "$sandbox_param" "$file_param"
         ;;
-    import)
+    import|-i|--import)
         import_sandbox "$sandbox_param" "$file_param"
         ;;
     version|-v|--version)
