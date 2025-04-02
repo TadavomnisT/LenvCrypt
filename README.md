@@ -40,26 +40,47 @@ To install LenvCrypt, follow these steps:
 
 
 ```shell
-Usage: ./lenvcrypt.sh <command> [sandbox_name]
+Usage: ./lenvcrypt.sh <command> [options/sandbox_name] [extra_option]
 
 Commands:
-  create    => Create a new sandbox.
+  create (-c, --create) => Create a new sandbox.
                    The script will prompt for a sandbox name and a size.
                    Example: ./lenvcrypt.sh create
-                            ./lenvcrypt.sh create mysandbox
-  open      => Open an existing sandbox.
+                            ./lenvcrypt.sh -c mysandbox
+
+  open (-o, --open)   => Open an existing sandbox.
                    Example: ./lenvcrypt.sh open mysandbox
-  close     => Close an opened sandbox.
+                            ./lenvcrypt.sh --open mysandbox
+
+  close (-c, --close)  => Close an opened sandbox.
                    Example: ./lenvcrypt.sh close mysandbox
-  list      => List all existing sandboxes.
+                            ./lenvcrypt.sh -c mysandbox
+
+  list (-l, --list)   => List all existing sandboxes.
                    Example: ./lenvcrypt.sh list
-  delete    => Delete an existing sandbox.
-                   This will remove the .img file and associated mountpoint.
+                            ./lenvcrypt.sh --list
+
+  delete (-d, --delete) => Delete an existing sandbox.
+                   This removes the .img file and associated mountpoint.
                    Example: ./lenvcrypt.sh delete mysandbox
-  help, -h, --help
-            => Display this help information.
-  version, -v, --version
-            => Display LenvCrypt's version.
+                            ./lenvcrypt.sh -d mysandbox
+
+  export (-e, --export) => Export a sandbox image to a specified file.
+                   Example: ./lenvcrypt.sh export mysandbox /path/to/export.img
+                            ./lenvcrypt.sh --export mysandbox /path/to/export.img
+
+  import (-i, --import) => Import a sandbox image from a file.
+                   The sandbox will be stored as <sandbox_name>.img.
+                   Example: ./lenvcrypt.sh import mysandbox /path/to/import.img
+                            ./lenvcrypt.sh -i mysandbox /path/to/import.img
+
+  version (-v, --version) => Display LenvCrypt version.
+                   Example: ./lenvcrypt.sh version
+                            ./lenvcrypt.sh --version
+
+  help (-h, --help)    => Display this help information.
+                   Example: ./lenvcrypt.sh help
+                            ./lenvcrypt.sh -h
 ```
 
 ```bash
